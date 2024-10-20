@@ -1,26 +1,24 @@
+import React, { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios";
 import { Link } from "react-router-dom";
-import { Bell, Home, LogOut, User, Users,MessageCircle  } from "lucide-react";
+import { Bell, Home, LogOut, User, Users, MessageCircle, Moon, Sun } from "lucide-react";
 import Loop from '../../Landing/src/assets/images/cursor.png';
 
-
-const Navbar = () => {
-	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+const Navbar = ({ setIsDark, isDark }) => {
 	const queryClient = useQueryClient();
 
+	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 	const { data: notifications } = useQuery({
 		queryKey: ["notifications"],
 		queryFn: async () => axiosInstance.get("/notifications"),
 		enabled: !!authUser,
 	});
-
 	const { data: connectionRequests } = useQuery({
 		queryKey: ["connectionRequests"],
 		queryFn: async () => axiosInstance.get("/connections/requests"),
 		enabled: !!authUser,
 	});
-
 	const { mutate: logout } = useMutation({
 		mutationFn: () => axiosInstance.post("/auth/logout"),
 		onSuccess: () => {
@@ -29,88 +27,80 @@ const Navbar = () => {
 		},
 	});
 
+	// Theme toggle function
+	const toggleTheme = () => {
+		setIsDark(!isDark);
+		console.log("Theme toggle function", isDark);
+	};
+
 	const unreadNotificationCount = notifications?.data.filter((notif) => !notif.read).length;
 	const unreadConnectionRequestsCount = connectionRequests?.data?.length;
 
 	return (
-		<nav className='bg-secondary shadow-md sticky top-0 z-10'>
+		<nav className={`bg-secondary ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-md sticky top-0 z-10`}>
 			<div className='max-w-7xl mx-auto px-4'>
 				<div className='flex justify-between items-center py-3'>
 					<div className='flex items-center space-x-4'>
 						<Link to='/'>
-						<div className="w-full flex items-center justify-center space-x-3">
-  <img className="h-10 w-auto" src={Loop} alt="Loop" />
-  <h1 className="text-xl font-extrabold text-violet-500 tracking-tight">
-    Loop
-  </h1>
-</div>
+							<div className="w-full flex items-center justify-center space-x-3">
+								<img className="h-10 w-auto" src={Loop} alt="Loop" />
+								<h1 className="text-xl font-extrabold text-violet-500 tracking-tight">Loop</h1>
+							</div>
 						</Link>
 					</div>
 					<div className='flex items-center gap-2 md:gap-6'>
 						{authUser ? (
 							<>
-								<Link to={"/"} className='text-neutral flex flex-col items-center'>
+								<Link to="/" className={`flex flex-col items-center ${isDark ? 'text-white' : 'text-black'}`}>
 									<Home size={20} />
 									<span className='text-xs hidden md:block'>Home</span>
 								</Link>
-								<Link to={"/messages"} className='text-neutral flex flex-col items-center'>
-									<MessageCircle  size={20} />
+								<Link to="/messages" className={`flex flex-col items-center ${isDark ? 'text-white' : 'text-black'}`}>
+									<MessageCircle size={20} />
 									<span className='text-xs hidden md:block'>Messages</span>
 								</Link>
-								<Link to='/network' className='text-neutral flex flex-col items-center relative'>
+								<Link to='/network' className={`flex flex-col items-center relative ${isDark ? 'text-white' : 'text-black'}`}>
 									<Users size={20} />
 									<span className='text-xs hidden md:block'>My Network</span>
 									{unreadConnectionRequestsCount > 0 && (
-										<span
-											className='absolute -top-1 -right-1 md:right-4 bg-blue-500 text-white text-xs 
-										rounded-full size-3 md:size-4 flex items-center justify-center'
-										>
+										<span className='absolute -top-1 -right-1 md:right-4 bg-blue-500 text-white text-xs rounded-full size-3 md:size-4 flex items-center justify-center'>
 											{unreadConnectionRequestsCount}
 										</span>
 									)}
 								</Link>
-								<Link to='/notifications' className='text-neutral flex flex-col items-center relative'>
+								<Link to='/notifications' className={`flex flex-col items-center relative ${isDark ? 'text-white' : 'text-black'}`}>
 									<Bell size={20} />
 									<span className='text-xs hidden md:block'>Notifications</span>
 									{unreadNotificationCount > 0 && (
-										<span
-											className='absolute -top-1 -right-1 md:right-4 bg-blue-500 text-white text-xs 
-										rounded-full size-3 md:size-4 flex items-center justify-center'
-										>
+										<span className='absolute -top-1 -right-1 md:right-4 bg-blue-500 text-white text-xs rounded-full size-3 md:size-4 flex items-center justify-center'>
 											{unreadNotificationCount}
 										</span>
 									)}
 								</Link>
-								<Link
-									to={`/profile/${authUser.username}`}
-									className='text-neutral flex flex-col items-center'
-								>
+								<Link to={`/profile/${authUser.username}`} className={`flex flex-col items-center ${isDark ? 'text-white' : 'text-black'}`}>
 									<User size={20} />
 									<span className='text-xs hidden md:block'>Me</span>
 								</Link>
-								<button
-									className='flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-800'
-									onClick={() => {logout(); 		
-									}}
-								>
+								<button className={`flex items-center space-x-1 text-sm text-gray-800 ${isDark ? 'text-white' : 'text-black'}`} onClick={logout}>
 									<LogOut size={20} />
 									<span className='hidden md:inline'>Logout</span>
 								</button>
 							</>
 						) : (
 							<>
-								<Link to='/login' className='btn btn-ghost'>
-									Sign In
-								</Link>
-								<Link to='/signup' className='btn btn-primary'>
-									Join now
-								</Link>
+								<Link to='/login' className='btn btn-ghost'>Sign In</Link>
+								<Link to='/signup' className='btn btn-primary'>Join now</Link>
 							</>
 						)}
+						{/* Dark Mode Toggle */}
+						<div onClick={toggleTheme} className='cursor-pointer p-2'>
+							{isDark ? <Moon size={20} className="text-white" /> : <Sun size={20} className="text-yellow-400" />}
+						</div>
 					</div>
 				</div>
 			</div>
 		</nav>
 	);
 };
+
 export default Navbar;

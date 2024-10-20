@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { Home, UserPlus, Bell } from "lucide-react";
 
-export default function Sidebar({ user }) {
+export default function Sidebar({ user, isDark }) {
   return (
-    <div className="bg-secondary rounded-lg shadow-lg max-w-sm mx-auto overflow-hidden">
+    <div className="rounded-lg max-w-sm mx-auto overflow-hidden dark:border-white border:black border-[1px] dark:bg-black dark:text-white  bg-white">
       <div className="relative">
         {/* Banner Image */}
         <div
@@ -17,18 +17,18 @@ export default function Sidebar({ user }) {
           <img
             src={user.profilePicture || "/avatar.png"}
             alt={user.name}
-            className="w-24 h-24 rounded-full border-4 border-white shadow-md"
+            className="w-24 h-24 rounded-full border-4 dark:text-white text-black  border-white shadow-md"
           />
         </div>
       </div>
 
-      <div className="mt-12 text-center p-4">
+      <div className={`mt-12 text-center p-4 dark:text-white text-black`}>
         {/* Name and Headline */}
         <Link to={`/profile/${user.username}`} className="block">
-          <h2 className="text-2xl font-semibold text-gray-800">{user.name}</h2>
+          <h2 className="text-2xl font-semibold dark:text-white">{user.name}</h2>
         </Link>
-        <p className="text-gray-500 mt-1">{"Loop User"}</p>
-        <p className="text-gray-400 text-sm mt-1">{user.location || "Earth"}</p>
+        <p className="mt-1">{ "Loop User" }</p>
+        <p className="dark:text-white text-black text-sm mt-1">{user.location || "Earth"}</p>
 
         {/* Connections */}
         <p className="text-info text-sm mt-2">
@@ -37,7 +37,7 @@ export default function Sidebar({ user }) {
 
         {/* Education */}
         {user.education.length > 0 && (
-          <div className="mt-4 text-sm text-gray-600">
+          <div className={`mt-4 text-sm dark:text-white text-black`}>
             <p className="font-semibold">Education:</p>
             <p key={user.education[0]._id} className="mt-1">
               {user.education[0].school}, {user.education[0].fieldOfStudy} (
@@ -55,7 +55,7 @@ export default function Sidebar({ user }) {
             <li>
               <Link
                 to="/"
-                className="flex items-center py-2 px-4 rounded-md hover:bg-primary hover:text-white transition-colors"
+                className={`flex items-center py-2 px-4 rounded-md transition-colors ${!isDark ? 'hover:bg-violet-700 text-black dark:text-white ' : 'hover:bg-primary text-black'}`}
               >
                 <Home className="mr-2" size={20} /> Home
               </Link>
@@ -63,7 +63,7 @@ export default function Sidebar({ user }) {
             <li>
               <Link
                 to="/network"
-                className="flex items-center py-2 px-4 rounded-md hover:bg-primary hover:text-white transition-colors"
+                className={`flex items-center py-2 px-4 rounded-md transition-colors hover:bg-violet-700 text-black dark:text-white  : 'hover:bg-primary text-black'}`}
               >
                 <UserPlus className="mr-2" size={20} /> My Network
               </Link>
@@ -71,7 +71,7 @@ export default function Sidebar({ user }) {
             <li>
               <Link
                 to="/notifications"
-                className="flex items-center py-2 px-4 rounded-md hover:bg-primary hover:text-white transition-colors"
+                className={`flex items-center py-2 px-4 rounded-md transition-colors ${!isDark ? 'hover:bg-violet-700 text-black dark:text-white ' : 'hover:bg-primary text-black'}`}
               >
                 <Bell className="mr-2" size={20} /> Notifications
               </Link>
@@ -80,11 +80,11 @@ export default function Sidebar({ user }) {
         </nav>
       </div>
 
-      <div className="border-t border-base-100 p-4">
+      <div className="border-t border-base-100 p-4 dark:text-white text-black">
         {/* Visit Profile Link */}
         <Link
           to={`/profile/${user.username}`}
-          className="text-sm font-semibold text-primary"
+          className={`text-sm font-semibold text-blue-400' : 'text-primary'}`}
         >
           Visit your profile
         </Link>

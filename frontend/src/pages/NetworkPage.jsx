@@ -35,13 +35,13 @@ const NetworkPage = () => {
 	};
 
 	return (
-		<div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
-			<div className='col-span-1 lg:col-span-1'>
+		<div className='grid grid-cols-1 lg:grid-cols-4 gap-6 dark:bg-black bg-white'>
+			<div className='col-span-1 lg:col-span-1 '>
 				<Sidebar user={user} />
 			</div>
-			<div className='col-span-1 lg:col-span-3'>
-				<div className='bg-secondary rounded-lg shadow p-6 mb-6'>
-					<h1 className='text-2xl font-bold mb-6'>My Network</h1>
+			<div className='col-span-1 lg:col-span-3   bg-white dark:bg-black'>
+				<div className='rounded-lg shadow p-6 mb-6  bg-white dark:bg-black'>
+					<h1 className='text-2xl font-bold mb-6 bg-white dark:bg-black dark:text-white text-black'>My Network</h1>
 
 					{connectionRequests?.data?.length > 0 ? (
 						<div className='mb-8'>
@@ -53,26 +53,27 @@ const NetworkPage = () => {
 							</div>
 						</div>
 					) : (
-						<div className='bg-white rounded-lg shadow p-6 text-center mb-6'>
+						<div className='bg-white rounded-lg shadow p-6 text-center mb-6 dark:bg-black'>
 							<UserPlus size={48} className='mx-auto text-gray-400 mb-4' />
-							<h3 className='text-xl font-semibold mb-2'>No Connection Requests</h3>
-							<p className='text-gray-600'>
+							<h3 className='text-xl font-semibold mb-2 dark:text-white text-black dark:bg-black bg-white'>No Connection Requests</h3>
+							<p className='text-gray-600 dark:text-white text-black dark:bg-black bg-white'>
 								You don&apos;t have any pending connection requests at the moment.
 							</p>
-							<p className='text-gray-600 mt-2'>
+							<p className='text-gray-600 mt-2 dark:text-white text-black dark:bg-black bg-white'>
 								Explore suggested connections below to expand your network!
 							</p>
 						</div>
 					)}
 					{connections?.data?.length > 0 && (
 						<div className='mb-8'>
-							<h2 className='text-xl font-semibold mb-4'>My Connections</h2>
-							<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+							<h2 className='text-xl font-semibold mb-4 dark:text-white text-black dark:bg-black bg-white '>My Connections</h2>
+							<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 dark:text-white text-black'>
 								{connections.data.map((connection) => (
 									<UserCard 
 										key={connection._id} 
 										user={connection} 
 										isConnection={true} 
+										// className={"dark:bg-black bg-white  bg-white dark:bg-black"}
 										onChatClick={() => handleUserChatClick(connection._id)} // Handle chat click
 									/>
 								))}

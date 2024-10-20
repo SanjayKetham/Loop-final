@@ -96,13 +96,13 @@ const NotificationsPage = () => {
 	};
 
 	return (
-		<div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
+		<div className='grid grid-cols-1 lg:grid-cols-4 gap-6 dark:border-white border-black border-[1px] dark:bg-black rounded-lg'>
 			<div className='col-span-1 lg:col-span-1'>
 				<Sidebar user={authUser} />
 			</div>
 			<div className='col-span-1 lg:col-span-3'>
-				<div className='bg-white rounded-lg shadow p-6'>
-					<h1 className='text-2xl font-bold mb-6'>Notifications</h1>
+				<div className='bg-white rounded-lg shadow p-6 bg-white dark:bg-black'>
+					<h1 className='text-2xl font-bold mb-6  dark:text-white text-black '>Notifications</h1>
 
 					{isLoading ? (
 						<p>Loading notifications...</p>
@@ -111,7 +111,7 @@ const NotificationsPage = () => {
 							{notifications.data.map((notification) => (
 								<li
 									key={notification._id}
-									className={`bg-white border rounded-lg p-4 my-4 transition-all hover:shadow-md ${
+									className={`bg-white dark:bg-black border rounded-lg p-4 my-4 transition-all hover:shadow-md ${
 										!notification.read ? "border-blue-500" : "border-gray-200"
 									}`}
 								>
@@ -130,7 +130,7 @@ const NotificationsPage = () => {
 													<div className='p-1 bg-gray-100 rounded-full'>
 														{renderNotificationIcon(notification.type)}
 													</div>
-													<p className='text-sm'>{renderNotificationContent(notification)}</p>
+													<p className='text-sm dark:text-white text-black'>{renderNotificationContent(notification)}</p>
 												</div>
 												<p className='text-xs text-gray-500 mt-1'>
 													{formatDistanceToNow(new Date(notification.createdAt), {

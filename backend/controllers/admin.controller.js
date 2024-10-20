@@ -4,6 +4,9 @@ import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import Admin from "../models/admin.model.js";
 import User from "../models/user.model.js";
 import Post from "../models/post.model.js";
+import ConnectionRequest from "../models/connectionRequest.model.js";
+import Message from "../models/message.model.js";
+import Notification from "../models/notification.model.js";
 export const adminLogin = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -36,7 +39,57 @@ export const adminLogin = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+export const deleteUser = async (req, res) => {
+  console.log("delete");
+  const userId = req.params.id;
+  console.log("deleting user", userId);
+  try {
+    // Step 1: Delete the user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
+    // Step 2: Delete related connection requests
+    await ConnectionRequest.deleteMany({
+      $or: [{ sender: userId }, { recipient: userId }],
+    });
+
+    // Step 3: Delete related messages
+    await Message.deleteMany({
+      $or: [{ sender: userId }, { recipient: userId }],
+    });
+
+    // Step 4: Delete related notifications
+    await Notification.deleteMany({
+      $or: [{ recipient: userId }, { relatedUser: userId }],
+    });
+
+    // Step 5: Delete related posts by the user
+    await Post.deleteMany({ author: userId });
+
+    // Step 6: Remove user's comments and likes from other posts
+    await Post.updateMany(
+      {},
+      {
+        $pull: {
+          comments: { user: userId },
+          likes: userId,
+        },
+      }
+    );
+
+    // Step 7: Delete the user
+    await User.findByIdAndDelete(userId);
+
+    res
+      .status(200)
+      .json({ message: "User and related data deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user and related data:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");

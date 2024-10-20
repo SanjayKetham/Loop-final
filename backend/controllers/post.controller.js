@@ -1,9 +1,10 @@
-import cloudinary from "../lib/cloudinary.js";
-import Post from "../models/post.model.js";
 import Notification from "../models/notification.model.js";
 import { sendCommentNotificationEmail } from "../emails/emailHandlers.js";
 import path from "path";
 import multer from 'multer'
+import cloudinary from "../lib/cloudinary.js";
+import Post from "../models/post.model.js";
+
 
 export const getFeedPosts = async (req, res) => {
   try {
@@ -238,3 +239,73 @@ export const likePost = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const editPost = async (req, res) => {
+  try {
+    const { id } = req.params; // assuming the post ID is passed in the URL
+    const { content } = req.body;
+    console.log("id ", id, content);
+    // Find the post by ID
+    let post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // Update the post content
+    if (content) {
+      post.content = content;
+    }
+
+    let check = false;
+    let response;
+
+    if (req.files.image) {
+      check = true;
+      response = await uploadFiletoCloudinary(
+        req.files.image[0],
+        "normalpractice"
+      );
+      post.contentimg = response.secure_url;
+    }
+
+    // Update video URL if a new video is uploaded
+    if (req.files.video) {
+      check = true;
+      response = await uploadFiletoCloudinary(
+        req.files.video[0],
+        "normalpractice"
+      );
+      post.contentvideo = response.secure_url;
+    }
+
+    await post.save();
+
+    res.status(200).json(post);
+  } catch (error) {
+    console.error("Error in editPost controller:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const deleteComment = async (req, res) => {
+  try {
+    const { postId, commentId } = req.body;
+    console.log("delete comment", postId, commentId);
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      { $pull: { comments: { _id: commentId } } },
+      { new: true }
+    ).populate("author", "name email username headline profilePicture");
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.status(200).json(post);
+  } catch (error) {
+    console.error("Error in deleteComment controller:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+

@@ -1,9 +1,22 @@
 import { useEffect, useState } from "react";
 
-import { Mail, User, Eye, MessageCircle, ChevronRight ,LogOut} from "lucide-react";
+import {
+  Mail,
+  User,
+  Eye,
+  MessageCircle,
+  ChevronRight,
+  LogOut,
+  Trash2,
+} from "lucide-react";
 import axios from "axios";
 import { axiosInstance } from "../../lib/axios";
-import { QueryClient, useMutation, useQuery,useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 // Sample user data
@@ -13,6 +26,7 @@ import toast from "react-hot-toast";
 function UserDetail({ user, onClose }) {
   const [isFrozen, setIsFrozen] = useState(user.isFreezed); // Initialize with user data
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { mutate: freezeUserMutation, isPending: isLikingPost } = useMutation({
     mutationFn: async (data) => {
@@ -28,6 +42,21 @@ function UserDetail({ user, onClose }) {
     },
   });
 
+  const { mutate: deleteUserMutation, isPending: isDeletingUser } = useMutation(
+    {
+      mutationFn: async (data) => {
+        const res = await axiosInstance.post(`/admin/deleteuser/${user._id}`);
+        return res.data;
+      },
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+        console.log("data", data);
+        toast.success("user deleted successfully");
+        onClose();
+      },
+    }
+  );
+
   const handleToggleChange = () => {
     setIsFrozen(!isFrozen);
     freezeUserMutation({ freeze: !isFrozen });
@@ -36,8 +65,9 @@ function UserDetail({ user, onClose }) {
   function handleViewPosts() {
     navigate(`/admin/posts/${user._id}`);
   }
-
-
+  const handleDeleteAccount = async () => {
+    deleteUserMutation();
+  };
   return (
     <div className="w-full max-w-md mx-auto p-4 dark:bg-black bg-white dark:text-white text-black shadow-lg rounded-lg">
       <div>
@@ -91,10 +121,13 @@ function UserDetail({ user, onClose }) {
           <Eye className="mr-2 h-4 w-4" />
           See Posts
         </button>
-        {/* <button className="flex p-1 justify-between items-center bg-black dark:bg-white text-white dark:text-black py-2 rounded hover:bg-violet-300">
-          <MessageCircle className="mr-2 h-4 w-4" />
-          See Chats
-        </button> */}
+        <button
+          onClick={handleDeleteAccount}
+          className="flex p-1 justify-between items-center bg-red-500 hover:bg-red-800 text-white dark:text-black py-2 px-4 rounded "
+        >
+          <Trash2 className="mr-2 h-4 w-4" />
+          Delete Account
+        </button>
       </div>
       <button
         onClick={onClose}
@@ -139,13 +172,13 @@ export default function ManageUsers() {
     )
   );
   const { mutate: logout } = useMutation({
-		mutationFn: () => axiosInstance.post("/auth/logout"),
-		onSuccess: () => {
-      navigate('/')
+    mutationFn: () => axiosInstance.post("/auth/logout"),
+    onSuccess: () => {
+      navigate("/");
 
-			queryClient.invalidateQueries({ queryKey: ["authUser"] });
-		},
-	});
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
+    },
+  });
 
   // if (loading) return <p>Loading...</p>;
   // if (error) return <p>Error: {error}</p>;
@@ -171,13 +204,15 @@ export default function ManageUsers() {
               Search
             </button>
             <button
-									className='flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-800'
-									onClick={() =>{navigate('/'); logout();  			
-                  }}
-								>
-									<LogOut size={20} />
-									<span className='hidden md:inline'>Logout</span>
-								</button>
+              className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-800"
+              onClick={() => {
+                navigate("/");
+                logout();
+              }}
+            >
+              <LogOut size={20} />
+              <span className="hidden md:inline">Logout</span>
+            </button>
           </div>
           {filteredUsers.length === 0 ? (
             <p>No users found.</p>

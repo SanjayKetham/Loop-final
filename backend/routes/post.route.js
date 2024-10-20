@@ -1,17 +1,19 @@
 import express from "express";
 import { protectRoute } from "../middleware/auth.middleware.js";
 import {
-	createPost,
-	getFeedPosts,
-	deletePost,
-	getPostById,
-	createComment,
-	likePost,
+  createPost,
+  getFeedPosts,
+  deletePost,
+  getPostById,
+  createComment,
+  likePost,
+  editPost,
+  deleteComment,
 } from "../controllers/post.controller.js";
 import multer from "multer";
-import path from 'path';
-const router = express.Router();
+import path from "path";
 
+const router = express.Router();
 
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
@@ -42,5 +44,18 @@ router.delete("/delete/:id", protectRoute, deletePost);
 router.get("/:id", protectRoute, getPostById);
 router.post("/:id/comment", protectRoute, createComment);
 router.post("/:id/like", protectRoute, likePost);
+
+router.post(
+	"/edit/:id",
+	protectRoute, // Authenticate the user
+	upload.fields([
+	  // Handle image and video file uploads
+	  { name: "image", maxCount: 1 }, // Allow 1 image
+	  { name: "video", maxCount: 1 }, // Allow 1 video
+	]),
+	editPost // Post creation controller
+  );
+
+  router.post("/deleteComment", protectRoute, deleteComment);
 
 export default router;

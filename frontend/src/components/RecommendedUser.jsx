@@ -124,18 +124,18 @@ const RecommendedUser = ({ user }) => {
   };
 
   return (
-    <div className="flex items-center justify-between p-4 mb-4 bg-white shadow-lg rounded-lg border border-gray-200">
+    <div className="flex items-center dark:border-white text-black border-black  dark:bg-black justify-between p-4 mb-4 bg-white shadow-lg rounded-lg border border-gray-200">
       <Link
         to={`/profile/${user.username}`}
-        className="flex items-center flex-grow"
+        className="flex items-center   flex-grow"
       >
         <img
           src={user.profilePicture || "/avatar.png"}
           alt={user.name}
-          className="w-14 h-14 rounded-full mr-4 border border-gray-300 shadow-sm"
+          className="w-14 h-14 rounded-full mr-4 shadow-sm"
         />
         <div>
-          <h3 className="font-semibold text-sm text-gray-800">{user.name}</h3>
+          <h3 className="font-semibold text-sm dark:text-white">{user.name}</h3>
           <div className="flex gap-2 mt-2 flex-wrap">
             {user.skillMatch === 1 && (
               <span className="bg-blue-50 text-blue-600 text-xs font-medium px-3 py-1 rounded-full shadow-sm">
@@ -153,7 +153,7 @@ const RecommendedUser = ({ user }) => {
               </span>
             )}
           </div>
-          <p className="text-xs mt-2 text-gray-500">{"Loop User"}</p>
+          <p className="text-xs mt-2 dark:text-white">{"Loop User"}</p>
         </div>
       </Link>
       <div>{renderButton()}</div>

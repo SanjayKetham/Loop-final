@@ -12,142 +12,147 @@ import NetworkPage from "./pages/NetworkPage";
 import PostPage from "./pages/PostPage";
 import ProfilePage from "./pages/ProfilePage";
 import Landing from "./Landing/Landing";
-import LoginForm from "./components/auth/LoginForm";
 import ManageUsers from "./components/admin/ManageUsers";
 import ViewUserPosts from "./components/admin/ViewUserPosts";
 import NotFoundPage from "./NotFoundPage";
 import ForgotPasswordForm from "./components/auth/ForgotPasswordForm";
 import ResetPasswordForm from "./components/auth/ResetPasswordForm";
+import { useState } from "react";
 
 function App() {
-  const { data: authUser, isLoading } = useQuery({
-    queryKey: ["authUser"],
-    queryFn: async () => {
-      try {
-        const res = await axiosInstance.get("/auth/me");
-        return res.data;
-      } catch (err) {
-        if (err.response && err.response.status === 401) {
-          return null;
-        }
-        toast.error(err.response.data.message || "Something went wrong");
-      }
-    },
-  });
-  console.log("authUser", authUser);
-  if (isLoading) return null; // Show nothing or a loader while checking authentication
-  const role = localStorage.getItem("userRole");
-  return (
-    <>
-      <Routes>
-      <Route path="*" element={<NotFoundPage/>}/>
-        <Route
-          path="/"
-          element={
-            authUser ? (
-              role !== "admin" ? (
-                <Layout>
-                  <HomePage />
-                </Layout>
-              ) : (
-                <ManageUsers />
-              )
-            ) : (
-              <Landing />
-            )
-          }
-        />
+	const [isDark, setIsDark] = useState(false);
+	const { data: authUser, isLoading } = useQuery({
+		queryKey: ["authUser"],
+		queryFn: async () => {
+			try {
+				const res = await axiosInstance.get("/auth/me");
+				return res.data;
+			} catch (err) {
+				if (err.response && err.response.status === 401) {
+					return null;
+				}
+				toast.error(err.response.data.message || "Something went wrong");
+			}
+		},
+	});
+  
+	if (isLoading) return null; // Show nothing or a loader while checking authentication
+	const role = localStorage.getItem("userRole");
 
-        <Route
-          path="/signup"
-          element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/login"
-          element={!authUser ? <LoginPage /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/forgotPassword"
-          element={!authUser ? <ForgotPasswordForm /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/reset-password/:id"
-          element={!authUser ? <ResetPasswordForm /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/resetPassword"
-          element={!authUser ? <ResetPasswordForm /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/admin/login"
-          element={!authUser ? <LoginPage /> : <Navigate to="/" />}
-        />
+	return (
+		<div className={`${isDark ? 'dark bg-gray-900' : 'bg-white'} min-h-screen`}>
+			<Routes>
+				<Route path="*" element={<NotFoundPage />} />
+				<Route
+					path="/"
+					element={
+						authUser ? (
+							role !== "admin" ? (
+								<Layout isDark={isDark} setIsDark={setIsDark}>
+									<HomePage isDark={isDark} setIsDark={setIsDark} />
+								</Layout>
+							) : (
+								<ManageUsers />
+							)
+						) : (
+							<Landing />
+						)
+					}
+				/>
 
-        {role === "admin" && (
-          <>
-            <Route path="/admin/posts/:userId" element={<ViewUserPosts />} />
-          </>
-        )}
-        {role === "user" && (
-          <>
-          <Route
-          path="/messages"
-          element={authUser ? <Layout><Messages /></Layout> : <Landing />}
-        />
-            <Route
-              path="/notifications"
-              element={
-                authUser ? (
-                  <Layout>
-                    <NotificationsPage />
-                  </Layout>
-                ) : (
-                  <Landing />
-                )
-              }
-            />
-            <Route
-              path="/network"
-              element={
-                authUser ? (
-                  <Layout>
-                    <NetworkPage />
-                  </Layout>
-                ) : (
-                  <Landing />
-                )
-              }
-            />
-            <Route
-              path="/post/:postId"
-              element={
-                authUser ? (
-                  <Layout>
-                    <PostPage />
-                  </Layout>
-                ) : (
-                  <Landing />
-                )
-              }
-            />
-            <Route
-              path="/profile/:username"
-              element={
-                authUser ? (
-                  <Layout>
-                    <ProfilePage />
-                  </Layout>
-                ) : (
-                  <Landing />
-                )
-              }
-            />
-          </>
-        )}
-      </Routes>
-      <Toaster />
-    </>
-  );
+				<Route
+					path="/signup"
+					element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
+				/>
+				<Route
+					path="/login"
+					element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+				/>
+				<Route
+					path="/forgotPassword"
+					element={!authUser ? <ForgotPasswordForm /> : <Navigate to="/" />}
+				/>
+				<Route
+					path="/reset-password/:id"
+					element={!authUser ? <ResetPasswordForm /> : <Navigate to="/" />}
+				/>
+				<Route
+					path="/resetPassword"
+					element={!authUser ? <ResetPasswordForm /> : <Navigate to="/" />}
+				/>
+				<Route
+					path="/admin/login"
+					element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+				/>
+
+				{role === "admin" && (
+					<>
+						<Route path="/admin/posts/:userId" element={<ViewUserPosts />} />
+					</>
+				)}
+				{role === "user" && (
+					<>
+						<Route
+							path="/messages"
+							element={authUser ? 								<Layout isDark={isDark} setIsDark={setIsDark}>
+
+                <Messages />
+                </Layout> : <Landing />}
+						/>
+						<Route
+							path="/notifications"
+							element={
+								authUser ? (
+                  <Layout isDark={isDark} setIsDark={setIsDark}>
+										<NotificationsPage />
+									</Layout>
+								) : (
+									<Landing />
+								)
+							}
+						/>
+						<Route
+							path="/network"
+							element={
+								authUser ? (
+                  <Layout isDark={isDark} setIsDark={setIsDark}>
+										<NetworkPage />
+									</Layout>
+								) : (
+									<Landing />
+								)
+							}
+						/>
+						<Route
+							path="/post/:postId"
+							element={
+								authUser ? (
+                  <Layout isDark={isDark} setIsDark={setIsDark}>
+										<PostPage />
+									</Layout>
+								) : (
+									<Landing />
+								)
+							}
+						/>
+						<Route
+							path="/profile/:username"
+							element={
+								authUser ? (
+                  <Layout isDark={isDark} setIsDark={setIsDark}>
+										<ProfilePage />
+									</Layout>
+								) : (
+									<Landing />
+								)
+							}
+						/>
+					</>
+				)}
+			</Routes>
+			<Toaster />
+		</div>
+	);
 }
 
 export default App;
