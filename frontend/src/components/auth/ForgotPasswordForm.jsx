@@ -13,7 +13,7 @@ const ForgotPasswordForm = () => {
       toast.success("Reset link sent to your email");
       navigate('/');
     } catch (err) {
-      toast.error(err.response.data.message || "Something went wrong");
+      toast.error(err.response?.data?.message || "Something went wrong");
     }
   };
 

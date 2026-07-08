@@ -17,7 +17,7 @@ const ResetPasswordForm = () => {
       await axiosInstance.post("/auth/reset-password", { token, newPassword });
       toast.success("Password has been reset successfully");
     } catch (err) {
-      toast.error(err.response.data.message || "Something went wrong");
+      toast.error(err.response?.data?.message || "Something went wrong");
     }
   };
 

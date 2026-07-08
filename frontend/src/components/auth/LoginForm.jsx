@@ -23,7 +23,7 @@ const LoginForm = () => {
       toast.success("Login successful");
     },
     onError: (err) => {
-      toast.error(err.response.data.message || "Something went wrong");
+      toast.error(err.response?.data?.message || "Something went wrong");
     },
   });
   const { mutate: adminloginMutation, isLoading: isLoading2 } = useMutation({
@@ -37,7 +37,7 @@ const LoginForm = () => {
       toast.success("Login successful");
     },
     onError: (err) => {
-      toast.error(err.response.data.message || "Something went wrong");
+      toast.error(err.response?.data?.message || "Something went wrong");
     },
   });
   const handleSubmit = (e) => {

@@ -53,7 +53,7 @@ const Post = ({ post }) => {
       toast.success("Comment added successfully");
     },
     onError: (err) => {
-      toast.error(err.response.data.message || "Failed to add comment");
+      toast.error(err.response?.data?.message || "Failed to add comment");
     },
   });
 
@@ -81,7 +81,7 @@ const Post = ({ post }) => {
       toast.success("Comment added successfully");
     },
     onError: (err) => {
-      toast.error(err.response.data.message || "Failed to add comment");
+      toast.error(err.response?.data?.message || "Failed to add comment");
     },
   });
   const handleLikePost = async () => {

@@ -27,7 +27,7 @@ const PostCreation = ({ user, isDark }) => {
       console.log("Post created with URLs:", post.contentimg, post.contentvideo);
     },
     onError: (err) => {
-      toast.error(err.response.data.message || "Failed to create post");
+      toast.error(err.response?.data?.message || "Failed to create post");
     },
   });
 

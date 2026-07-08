@@ -85,7 +85,7 @@ export const login = async (req, res) => {
     await res.cookie("jwt-linkedin", token, {
       httpOnly: true,
       maxAge: 3 * 24 * 60 * 60 * 1000,
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
     });
 
@@ -131,7 +131,7 @@ export const forgotPassword = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
-        user: "praveenmathi824@gmail.com",
+        user: "sanjayketham2004@gmail.com",
         pass: "lyfl eqda mpxc ndso",
       },
     });

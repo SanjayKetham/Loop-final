@@ -24,7 +24,7 @@ const EditPost = ({ post, onClose }) => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
     onError: (err) => {
-      toast.error(err.response.data.message || "Failed to update post");
+      toast.error(err.response?.data?.message || "Failed to update post");
     },
   });
 

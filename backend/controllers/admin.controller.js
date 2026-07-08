@@ -29,7 +29,7 @@ export const adminLogin = async (req, res) => {
     await res.cookie("jwt-linkedin", token, {
       httpOnly: true,
       maxAge: 3 * 24 * 60 * 60 * 1000,
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
     });
 
